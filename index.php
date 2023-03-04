@@ -48,7 +48,7 @@ try {
         `note_id` INT NOT NULL,
         FOREIGN KEY (`note_id`) REFERENCES `note`(`id`)
     )";
-
+//i will show you what is wrong
     $mysql->query($usersql); // crate a user table if not exist
     $mysql->query($notesql); // crate a notes table if not exist
     $mysql->query($imagesql);
