@@ -56,3 +56,4 @@ try {
     echo "could not connect to database";
     error_log($e->getMessage());
 }
+?>
