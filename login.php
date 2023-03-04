@@ -16,7 +16,6 @@ becomes “locked” and an email is sent to the user
 
 // display a login form
 // if the user is logged in, redirect to the notes list page?
-
 ?>
 
 <?php
@@ -29,7 +28,6 @@ if (isset($_SESSION['attempt_again'])) {
         unset($_SESSION['attempt_again']);
     }
 }
-
 ?>
 
 
