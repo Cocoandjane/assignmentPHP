@@ -30,7 +30,8 @@ try {
     // Create a user table if not exist
     $usersql = "CREATE TABLE IF NOT EXISTS `user` (
         `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-        `email` VARCHAR(45) NOT NULL 
+        `email` VARCHAR(45) NOT NULL,
+        `hash` VARCHAR(45) NOT NULL
     )";
 
     // create a notes table if not exist
@@ -54,6 +55,64 @@ try {
     $mysql->query($imagesql);
 } catch (mysqli_sql_exception $e) {
     echo "could not connect to database";
+    echo $e->getMessage();
     error_log($e->getMessage());
 }
+
+// // check if the user is logged in
+// if (isset($_SESSION['user_id'])) {
+//     // if the user is logged in, display the notes list
+//     $user_id = $_SESSION['user_id'];
+//     $sql = "SELECT * FROM note WHERE user_id = $user_id";
+//     $result = $mysql->query($sql);
+//     $notes = $result->fetch_all(MYSQLI_ASSOC);
+//     $mysql->close();
+//     // display the notes list
+//     echo "<h1>Notes</h1>";
+//     echo "<ul>";
+//     foreach ($notes as $note) {
+//         echo "<li>" . $note['note'] . "</li>";
+//     }
+//     echo "</ul>";
+// } else {
+//     // if the user is not logged in, redirect to the login page
+//     header("Location: login.php");
+// }
+
+// make a form to allow the user to add a note
+echo "<form action='index.php' method='post'>";
+echo "<input type='text' name='note' placeholder='Add a note'>";
+echo "<input type='submit' value='Add Note'>";
+echo "</form>";
+
+// if the user submitted a note, add it to the database
+if (isset($_POST['note'])) {
+    $note = $_POST['note'];
+    $user_id = $_SESSION['user_id'];
+    $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
+    $mysql->query($sql);
+    $mysql->close();
+    header("Location: index.php");
+}
 ?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+        
+        </div>
+    </div>
+</body>
+
+</html>
