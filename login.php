@@ -21,13 +21,16 @@ becomes “locked” and an email is sent to the user
 <?php
 session_start();
 //check if can login again
-if (isset($_SESSION['attempt_again'])) {
-    $now = time();
-    if ($now >= $_SESSION['attempt_again']) {
-        unset($_SESSION['attempt']);
-        unset($_SESSION['attempt_again']);
-    }
-}
+// if (isset($_SESSION['attempt_again'])) {
+//     $now = time();
+//     if ($now >= $_SESSION['attempt_again']) {
+//         unset($_SESSION['attempt']);
+//         unset($_SESSION['attempt_again']);
+//     }
+// }
+
+// unset($_SESSION['attempt']);
+
 ?>
 
 
@@ -49,12 +52,12 @@ if (isset($_SESSION['attempt_again'])) {
                 <form action="receive.php" method="POST">
                     <p class="text-center" style="font-size:25px;"><b>Login</b></p>
                     <div class="form-group">
-                        <label for="username">Email:</label>
-                        <input type="username" name="username" id="username" class="form-control" placeholder="email">
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="email">
                     </div>
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" minlength="8" class="form-control" placeholder="password">
+                        <input type="password" name="password" id="password" minlength="6" class="form-control" placeholder="password">
                     </div>
                     <button type="submit" name="login" class="btn btn-primary"></span> Login</button>&nbsp;&nbsp;&nbsp;
                     <button type="reset" name="reset" class="btn btn-secondary"></span> Reset Password</button>
