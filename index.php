@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Login</title>
 </head>
 <style>
@@ -15,13 +14,14 @@
 
 <body>
     <div class="container">
+        <a href="./logout.php"><button type="button" class="btn btn-secondary">Logout</button></a>
         <div class="row">
-            <?php if (isset($_POST['edit'])) {} ?>
+            <?php if (isset($_POST['edit'])) {
+            } ?>
             <form enctype="multipart/form-data" action="" method="post">
                 <div class="form-group">
                     <label for="note">Note</label>
-                    <textarea type='text' name='note' placeholder='Add a note' class="form-control" id="note"
-                        rows="3"></textarea>
+                    <textarea type='text' name='note' placeholder='Add a note' class="form-control" id="note" rows="3"></textarea>
                 </div>
                 <div class="mb-3">
                     <p>
@@ -35,6 +35,7 @@
         </div>
     </div>
 </body>
+
 </html>
 <?php
 /*
@@ -77,21 +78,21 @@ if (isset($_SESSION['email'])) {
 
 
 if (isset($_POST['note'])) {
-  
+
     if (isset($_FILES['userfile'])) {
         $note = $_POST['note'];
         echo $note;
         $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
         $mysql->query($sql);
         $note_id = $mysql->insert_id;
-        
+
         echo $note_id;
 
         $targetDir = "uploads/images/";
         $fileName = basename($_FILES["userfile"]["name"]);
         $targetFilePath = $targetDir . $fileName;
         $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-    
+
         // Allow certain file formats
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
         if (in_array($fileType, $allowTypes)) {
@@ -107,7 +108,6 @@ if (isset($_POST['note'])) {
             } else {
                 $statusMsg = "Sorry, there was an error uploading your file.";
             }
-
         } else {
             $statusMsg = 'Sorry, only JPG, JPEG, PNG, & GIF files are allowed to upload.';
         }
@@ -120,10 +120,9 @@ if (isset($_POST['note'])) {
         echo $note_id;
         $statusMsg = 'Please select a file to upload.';
     }
- // redirect to new page
- header('Location: /assignmentPHP/index.php');
- exit;
-    
+    // redirect to new page
+    header('Location: /assignmentPHP/index.php');
+    exit;
 }
 
 
@@ -136,40 +135,39 @@ $result = $mysql->query($sql);
 
 // display the notes list with images
 
-if($result->num_rows > 0){
+if ($result->num_rows > 0) {
 
-echo "<div class='container'>";
-echo "<div class='row'>";
-echo "<div class='col'>";
-echo "<h1>Notes</h1>";
-echo "<ul>";
-while ($note = $result->fetch_assoc()) {
-    echo "<li>";
-    echo $note['note'];
-    echo "<form action='' method='post'>";
-    echo "<input type='hidden' name='note_id' value='" . $note['id'] . "'>";
-    echo "<button type='submit' name='edit' class='btn btn-secondary'>Edit</button>";
-    echo "<button type='submit' name='delete' class='btn btn-danger'>Delete</button>";
-    echo "</form>";
-    echo "</li>";
-    echo "<img src='uploads/images/" . $note['file_name'] . "' alt=''>";
-}
-echo "</ul></div></div></div>";
+    echo "<div class='container'>";
+    echo "<div class='row'>";
+    echo "<div class='col'>";
+    echo "<h1>Notes</h1>";
+    echo "<ul>";
+    while ($note = $result->fetch_assoc()) {
+        echo "<li>";
+        echo $note['note'];
+        echo "<form action='' method='post'>";
+        echo "<input type='hidden' name='note_id' value='" . $note['id'] . "'>";
+        echo "<button type='submit' name='edit' class='btn btn-secondary'>Edit</button>";
+        echo "<button type='submit' name='delete' class='btn btn-danger'>Delete</button>";
+        echo "</form>";
+        echo "</li>";
+        echo "<img src='uploads/images/" . $note['file_name'] . "' alt=''>";
+    }
+    echo "</ul></div></div></div>";
 } else {
-echo "<p>No notes found</p>";
+    echo "<p>No notes found</p>";
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['edit'])) {
-      // process edit form
-      $note_id = $_POST['note_id'];
-      // ...
+        // process edit form
+        $note_id = $_POST['note_id'];
+        // ...
         echo $note_id;
         echo "edit";
-
     } elseif (isset($_POST['delete'])) {
-      // process delete form
-      $note_id = $_POST['note_id'];
+        // process delete form
+        $note_id = $_POST['note_id'];
         echo $note_id;
         echo "delete";
         $sql = "DELETE FROM note WHERE id = $note_id";
@@ -178,6 +176,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mysql->query($sql);
         header('Location: /assignmentPHP/index.php');
     }
-  }
+}
 ?>
-
