@@ -28,6 +28,7 @@ try {
         `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
         `user_id` INT NOT NULL,
         FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+        ON DELETE CASCADE
         )";
 
     $imagesql = "CREATE TABLE IF NOT EXISTS `image` (
@@ -35,6 +36,7 @@ try {
         `file_name` VARCHAR(500) NOT NULL,
         `note_id` INT NOT NULL,
         FOREIGN KEY (`note_id`) REFERENCES `note`(`id`)
+        ON DELETE CASCADE
     )";
 
     $mysql->query($usersql); // crate a user table if not exist
