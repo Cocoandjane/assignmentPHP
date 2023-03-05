@@ -1,7 +1,7 @@
 <?php
 /*
 1. The system must have membership-signup functionality including:
-a. No duplicate usernames are permitted
+a. No duplicate usernames are permitted DONE
 b. Username must be an email address
 c. Passwords are hashed when stored (i.e., the database does not contain the actual password)
 2. There must be a “reset password” function whereby users who forget their passwords can get an email
@@ -28,8 +28,11 @@ session_start();
 //         unset($_SESSION['attempt_again']);
 //     }
 // }
+echo "Attempts made: " . $_SESSION['attempt'];
+unset($_SESSION['success']);
+unset($_SESSION['email']);
+// unset($_SESSION['attempt']);
 
-unset($_SESSION['attempt']);
 
 ?>
 
