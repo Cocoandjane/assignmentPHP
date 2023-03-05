@@ -13,10 +13,10 @@
     <?php include 'index.css'; ?>
 </style>
 
-<body>
+<!-- <body>
     <div class="container">
         <div class="row">
-            <?php if (isset($_POST['edit'])) {} ?>
+
             <form enctype="multipart/form-data" action="" method="post">
                 <div class="form-group">
                     <label for="note">Note</label>
@@ -25,16 +25,87 @@
                 </div>
                 <div class="mb-3">
                     <p>
-                        <label for="userfile">Upload: </label>
-                        <input type="file" name="userfile" id="userfile">
+                        <label for="userfiles">Upload: </label>
+                        <input type="file" name="userfiles[]" id="userfiles" multiple>
                     </p>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
-
         </div>
     </div>
-</body>
+
+</body> -->
+<?php
+include 'dbConfig.php';
+if (isset($_POST['edit'])) {
+    // edit form
+    $note_id = $_POST['note_id'];
+    $sql = "SELECT * FROM note WHERE id = $note_id";
+    $result = $mysql->query($sql);
+
+    if ($result->num_rows > 0) {
+        $note = $result->fetch_assoc();
+        echo "<form enctype='multipart/form-data' action='' method='post'>";
+        echo "<div class='form-group'>";
+        echo "<label for='note'>Note</label>";
+        echo "<textarea type='text' name='note' class='form-control' id='note' rows='3'>" . $note['note'] . "</textarea>";
+        echo "</div>";
+        echo "<div class='mb-3'>";
+        echo "<p><label for='userfiles'>Upload:</label>";
+        echo "<input type='file' name='userfiles[]' id='userfiles' multiple>";
+        echo "</p>";
+        echo "<input type='hidden' name='note_id' value='" . $note_id . "'>";
+        $sql = "SELECT * FROM image WHERE note_id = $note_id";
+        $result = $mysql->query($sql);
+        if ($result->num_rows > 0) {
+            while ($image = $result->fetch_assoc()) {
+                echo "<img src='uploads/images/" . $image['file_name'] . "'>";
+                echo "<form action='' method='post'>";
+                echo "<input type='hidden' name='image_id' value='" . $image['id'] . "'>";
+                echo "<button type='submit' name='deleteImage' class='btn btn-secondary'>Delete image</button>";
+                echo "</form>";
+            }
+        }
+        
+        echo "<button type='submit' name='update' class='btn btn-primary'>Update</button>";
+        echo "</div></form>";
+
+        // display images
+
+    } else {
+        echo "<p>No notes found</p>";
+    }
+} else if (isset($_POST['update'])) {
+    $note_id = $_POST['note_id'];
+    $note = $_POST['note'];
+    $query = "UPDATE note SET note = '$note' WHERE id = $note_id";
+    $result = $mysql->query($query);
+
+    if ($result) {
+        // Display a success message
+        $statusMsg = "Note updated successfully.";
+    } else {
+        // Display an error message
+        $statusMsg = "Error updating note.";
+    }
+    header('Location: /assignmentPHP/index.php');
+} else {
+    // post form
+    echo "<form enctype='multipart/form-data' action='' method='post'>";
+    echo "<div class='form-group'>";
+    echo "<label for='note'>Note</label>";
+    echo "<textarea type='text' name='note' placeholder='Add a note' class='form-control' id='note' rows='3'></textarea>";
+    echo "</div>";
+    echo "<div class='mb-3'>";
+    echo "<p><label for='userfiles'>Upload:</label>";
+    echo "<input type='file' name='userfiles[]' id='userfiles' multiple>";
+    echo "</p>";
+    echo "<button type='submit' name='submit' class='btn btn-primary'>Submit</button>";
+    echo "</div></form>";
+}
+?>
+
+
 </html>
 <?php
 /*
@@ -59,8 +130,7 @@ session_start();
 if (isset($_SESSION['email'])) {
     // if the user is logged in, display the notes list
     $sessionEmail = $_SESSION['email'];
-    echo $sessionEmail;
-
+  
     // // get user id from email from database
     // Assuming that $sessionEmail is a safe value
     $sql = "SELECT id FROM user WHERE email = '$sessionEmail'";
@@ -69,62 +139,127 @@ if (isset($_SESSION['email'])) {
     $user_id = $user['id'];
 
     // Use the $user_id value elsewhere in your code
-    echo "The user ID is: " . $user_id;
+    // echo "The user ID is: " . $user_id;
 } else {
     // if the user is not logged in, redirect to the login page
     header("Location: login.php");
 }
 
-
-if (isset($_POST['note'])) {
-  
-    if (isset($_FILES['userfile'])) {
+if (isset($_POST['note']) && isset($_POST['submit'])) {
+    
+    if (isset($_FILES['userfiles'])) {
         $note = $_POST['note'];
         echo $note;
         $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
         $mysql->query($sql);
         $note_id = $mysql->insert_id;
-        
+
         echo $note_id;
 
-        $targetDir = "uploads/images/";
-        $fileName = basename($_FILES["userfile"]["name"]);
-        $targetFilePath = $targetDir . $fileName;
-        $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-    
-        // Allow certain file formats
-        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-        if (in_array($fileType, $allowTypes)) {
-            // Upload file to server
-            if (move_uploaded_file($_FILES["userfile"]["tmp_name"], $targetFilePath)) {
-                // Insert image file name into database
-                $insert = $mysql->query("INSERT into image (file_name, note_id) VALUES ('" . $fileName . "', '" . $note_id . "')");
-                if ($insert) {
-                    $statusMsg = "The file " . $fileName . " has been uploaded successfully.";
+        if (isset($_FILES['userfiles'])) {
+            $total_files = count($_FILES['userfiles']['name']);
+            if ($total_files < 4) {
+                $errors = array();
+                $uploadedFiles = array();
+                $extension = array("jpeg", "jpg", "png", "gif");
+
+                foreach ($_FILES['userfiles']['tmp_name'] as $key => $tmp_name) {
+                    $file_name = $_FILES['userfiles']['name'][$key];
+                    $file_tmp = $_FILES['userfiles']['tmp_name'][$key];
+                    $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                    if (in_array($file_ext, $extension) === false) {
+                        $errors[] = "extension not allowed, please choose a JPEG, PNG, or GIF file.";
+                    }
+
+                    if (empty($errors) == true) {
+                        $uploadedFiles[] = $file_name;
+                        // move_uploaded_file($file_tmp, "uploads/images/" . $file_name);
+                        move_uploaded_file($file_tmp, "uploads/images/" . $file_name);
+                        // save images to db
+                        $sql = "INSERT INTO image (file_name, note_id) VALUES ('$file_name', $note_id)";
+                        $mysql->query($sql);
+
+                    }
+                }
+
+                if (empty($errors)) {
+                    echo "Images uploaded successfully:";
+                    echo "<ul>";
+                    foreach ($uploadedFiles as $name) {
+                        echo "<li>$name</li>";
+                    }
+                    echo "</ul>";
                 } else {
-                    $statusMsg = "File upload failed, please try again.";
+                    print_r($errors);
                 }
             } else {
-                $statusMsg = "Sorry, there was an error uploading your file.";
+                $statusMsg = 'You can only upload a maximum of 4 images.';
+                echo $statusMsg;
             }
-
         } else {
-            $statusMsg = 'Sorry, only JPG, JPEG, PNG, & GIF files are allowed to upload.';
+            $note = $_POST['note'];
+            echo $note;
+            $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
+            $mysql->query($sql);
+            $note_id = $mysql->insert_id;
+            echo $note_id;
+            $statusMsg = 'Please select a file to upload.';
         }
-    } else {
-        $note = $_POST['note'];
-        echo $note;
-        $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
-        $mysql->query($sql);
-        $note_id = $mysql->insert_id;
-        echo $note_id;
-        $statusMsg = 'Please select a file to upload.';
+        header('Location: /assignmentPHP/index.php');
+        exit;
     }
- // redirect to new page
- header('Location: /assignmentPHP/index.php');
- exit;
-    
 }
+
+// if (isset($_POST['note'])) {
+
+//     if (isset($_FILES['userfiles'])) {
+//         $note = $_POST['note'];
+//         echo $note;
+//         $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
+//         $mysql->query($sql);
+//         $note_id = $mysql->insert_id;
+
+//         echo $note_id;
+
+//         $targetDir = "uploads/images/";
+//         $fileName = basename($_FILES["userfiles"]["name"]);
+//         $targetFilePath = $targetDir . $fileName;
+//         $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+
+//         // Allow certain file formats
+//         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+//         if (in_array($fileType, $allowTypes)) {
+//             // Upload file to server
+//             if (move_uploaded_file($_FILES["userfiles"]["tmp_name"], $targetFilePath)) {
+//                 // Insert image file name into database
+//                 $insert = $mysql->query("INSERT into image (file_name, note_id) VALUES ('" . $fileName . "', '" . $note_id . "')");
+//                 if ($insert) {
+//                     $statusMsg = "The file " . $fileName . " has been uploaded successfully.";
+//                 } else {
+//                     $statusMsg = "File upload failed, please try again.";
+//                 }
+//             } else {
+//                 $statusMsg = "Sorry, there was an error uploading your file.";
+//             }
+
+//         } else {
+//             $statusMsg = 'Sorry, only JPG, JPEG, PNG, & GIF files are allowed to upload.';
+//         }
+//     } else {
+//         $note = $_POST['note'];
+//         echo $note;
+//         $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
+//         $mysql->query($sql);
+//         $note_id = $mysql->insert_id;
+//         echo $note_id;
+//         $statusMsg = 'Please select a file to upload.';
+//     }
+//  // redirect to new page
+//  header('Location: /assignmentPHP/index.php');
+//  exit;
+
+// }
 
 
 $sql = "SELECT note.*, image.file_name 
@@ -136,40 +271,55 @@ $result = $mysql->query($sql);
 
 // display the notes list with images
 
-if($result->num_rows > 0){
-
-echo "<div class='container'>";
-echo "<div class='row'>";
-echo "<div class='col'>";
-echo "<h1>Notes</h1>";
-echo "<ul>";
-while ($note = $result->fetch_assoc()) {
-    echo "<li>";
-    echo $note['note'];
-    echo "<form action='' method='post'>";
-    echo "<input type='hidden' name='note_id' value='" . $note['id'] . "'>";
-    echo "<button type='submit' name='edit' class='btn btn-secondary'>Edit</button>";
-    echo "<button type='submit' name='delete' class='btn btn-danger'>Delete</button>";
-    echo "</form>";
-    echo "</li>";
-    echo "<img src='uploads/images/" . $note['file_name'] . "' alt=''>";
-}
-echo "</ul></div></div></div>";
+if ($result->num_rows > 0) {
+    $notes = array();
+    while ($note = $result->fetch_assoc()) {
+        $id = $note['id'];
+        if (!isset($notes[$id])) {
+            $notes[$id] = array(
+                'note' => $note['note'],
+                'images' => array()
+            );
+        }
+        if ($note['file_name']) {
+            $notes[$id]['images'][] = $note['file_name'];
+        }
+    }
+    echo "<div class='container'>";
+    echo "<div class='row'>";
+    echo "<div class='col'>";
+    echo "<h1>Notes</h1>";
+    echo "<ul class='list-group'>";
+    foreach ($notes as $id => $note) {
+        echo "<li class='list-group-item'>";
+        echo "<h3>" . $note['note'] . "</h3>";
+        echo "<form action='' method='post'>";
+        echo "<input type='hidden' name='note_id' value='" . $id . "'>";
+        echo "<button type='submit' name='edit' class='btn btn-secondary mr-2'>Edit</button>";
+        echo "<button type='submit' name='delete' class='btn btn-danger'>Delete</button>";
+        echo "</form>";
+        if (!empty($note['images'])) {
+            echo "<div class='row mt-3'>";
+            foreach ($note['images'] as $image) {
+                echo "<div class='col-sm-4'>";
+                echo "<img class='img-fluid rounded' src='uploads/images/" . $image . "' alt=''>";
+                echo "</div>";
+            }
+            echo "</div>";
+        }
+        echo "</li>";
+    }
+    echo "</ul></div></div></div>";
 } else {
-echo "<p>No notes found</p>";
+    echo "<p>No notes found</p>";
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['edit'])) {
-      // process edit form
-      $note_id = $_POST['note_id'];
-      // ...
-        echo $note_id;
-        echo "edit";
-
-    } elseif (isset($_POST['delete'])) {
-      // process delete form
-      $note_id = $_POST['note_id'];
+   
+    if (isset($_POST['delete'])) {
+        // process delete form
+        $note_id = $_POST['note_id'];
         echo $note_id;
         echo "delete";
         $sql = "DELETE FROM note WHERE id = $note_id";
@@ -177,7 +327,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = "DELETE FROM image WHERE note_id = $note_id";
         $mysql->query($sql);
         header('Location: /assignmentPHP/index.php');
+    }else if (isset($_POST['deleteImage'])){
+        $image_id = $_POST['image_id'];
+        $query = "DELETE FROM image WHERE id = $image_id";
+        $result = $mysql->query($query);
+        header('Location: /assignmentPHP/index.php');
     }
-  }
+}
 ?>
-

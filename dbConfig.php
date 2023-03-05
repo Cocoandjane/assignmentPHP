@@ -18,7 +18,8 @@ try {
     $usersql = "CREATE TABLE IF NOT EXISTS `user` (
         `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
         `email` VARCHAR(45) NOT NULL,
-        `passwordHash` VARCHAR(255) NOT NULL
+        `passwordHash` VARCHAR(255) NOT NULL,
+        `active` BOOLEAN DEFAULT 0
     )";
 
 
