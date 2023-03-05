@@ -145,24 +145,24 @@ include 'dbConfig.php';
 session_start();
 
 // check if the user is logged in
-// if (isset($_SESSION['email'])) {
-//     // if the user is logged in, display the notes list
-//     $sessionEmail = $_SESSION['email'];
+if (isset($_SESSION['email'])) {
+    // if the user is logged in, display the notes list
+    $sessionEmail = $_SESSION['email'];
   
-//     // // get user id from email from database
-//     // Assuming that $sessionEmail is a safe value
-//     $sql = "SELECT id FROM user WHERE email = '$sessionEmail'";
-//     $result = $mysql->query($sql);
-//     $user = $result->fetch_assoc();
-//     $user_id = $user['id'];
+    // // get user id from email from database
+    // Assuming that $sessionEmail is a safe value
+    $sql = "SELECT id FROM user WHERE email = '$sessionEmail'";
+    $result = $mysql->query($sql);
+    $user = $result->fetch_assoc();
+    $user_id = $user['id'];
 
-//     // Use the $user_id value elsewhere in your code
-//     // echo "The user ID is: " . $user_id;
-// } else {
-//     // if the user is not logged in, redirect to the login page
-//     header("Location: login.php");
-// }
-$user_id = 1;
+    // Use the $user_id value elsewhere in your code
+    // echo "The user ID is: " . $user_id;
+} else {
+    // if the user is not logged in, redirect to the login page
+    header("Location: login.php");
+}
+// $user_id = 1;
 
 if (isset($_POST['note']) && isset($_POST['submit'])) {
     
