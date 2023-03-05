@@ -312,13 +312,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['delete'])) {
         // process delete form
         $note_id = $_POST['note_id'];
-        echo $note_id;
-        echo "delete";
         $sql = "DELETE FROM note WHERE id = $note_id";
         $mysql->query($sql);
         $sql = "DELETE FROM image WHERE note_id = $note_id";
         $mysql->query($sql);
-        // header('Location: /assignmentPHP/index.php');
+        
+        header('Location: /assignmentPHP/index.php');
     }else if (isset($_POST['deleteImage'])){
         $image_id = $_POST['image_id'];
         $query = "DELETE FROM image WHERE id = $image_id";
