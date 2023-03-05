@@ -44,11 +44,11 @@ try {
         $inputEmail = $_POST['email'];
         $inputPassword = $_POST['password'];
 
-        if (filter_var($inputEmail, FILTER_VALIDATE_EMAIL)) {
-            echo ("$inputEmail is a valid email address");
-        } else {
-            exit("$inputEmail is not a valid email address");
-        }
+        // if (filter_var($inputEmail, FILTER_VALIDATE_EMAIL)) {
+        //     echo ("$inputEmail is a valid email address");
+        // } else {
+        //     exit("$inputEmail is not a valid email address");
+        // }
 
         $servername = "containers-us-west-119.railway.app";
         $username = "root";
@@ -56,8 +56,8 @@ try {
         $database = "railway";
         $port = 7628;
 
-        $conn = new mysqli($servername, $username, $password, $database, $port);
-        if ($conn === false) {
+        $mysql = new mysqli($servername, $username, $password, $database, $port);
+        if ($mysql === false) {
             die("ERROR: Could not connect. "
                 . mysqli_connect_error());
         } else {
@@ -77,7 +77,7 @@ try {
         } else {
             //get the user with the email
             $sql = "SELECT * FROM user WHERE email = '$inputEmail'";
-            $query = $conn->query($sql);
+            $query = $mysql->query($sql);
             if ($query->num_rows > 0) {
                 echo "user found";
                 $row = $query->fetch_assoc();
@@ -87,6 +87,7 @@ try {
                     // echo "password correct";
                     //action after a successful login
                     $_SESSION['success'] = 'Login successful';
+                    $_SESSION['email'] = $inputEmail;
                     //unset attempt
                     unset($_SESSION['attempt']);
 
@@ -110,10 +111,12 @@ try {
                 // echo "sign up user";
                 $hashed_password = password_hash($inputPassword, PASSWORD_DEFAULT);
                 $insert_user = "INSERT INTO user (email, passwordHash) VALUES ('$inputEmail', '$hashed_password')";
-                $conn->query($insert_user);
-                if ($conn->query($insert_user) === TRUE) {
-                    echo "New user created successfully";
-                }
+                $mysql->query($insert_user);
+                // if ($mysql->query($insert_user) === TRUE) {
+                //     echo "New user created successfully";
+                // }
+                $_SESSION['email'] = $inputEmail;
+                header('location: index.php');
             }
         }
     } else {

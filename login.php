@@ -29,7 +29,7 @@ session_start();
 //     }
 // }
 
-// unset($_SESSION['attempt']);
+unset($_SESSION['attempt']);
 
 ?>
 

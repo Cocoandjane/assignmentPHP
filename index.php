@@ -15,8 +15,9 @@ c. Users who are inactive for more than 10 minutes are logged out - phoenix
 // if the user is not logged in, redirect to the login page - phoenix
 
 include 'dbConfig.php';
-// // check if the user is logged in
-// if (isset($_SESSION['user_id'])) {
+
+// check if the user is logged in
+// if (isset($_SESSION['email'])) {
 //     // if the user is logged in, display the notes list
 //     $user_id = $_SESSION['user_id'];
 //     $sql = "SELECT * FROM note WHERE user_id = $user_id";
@@ -34,7 +35,14 @@ include 'dbConfig.php';
 //     // if the user is not logged in, redirect to the login page
 //     header("Location: login.php");
 // }
+session_start();
 
+if (isset($_SESSION['email'])) {
+    echo "user logged in";
+} else {
+    echo "user not logged in";
+    // header("Location: login.php");
+}
 
 
 ?>

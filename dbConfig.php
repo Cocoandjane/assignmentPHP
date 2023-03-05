@@ -18,7 +18,7 @@ try {
     $usersql = "CREATE TABLE IF NOT EXISTS `user` (
         `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
         `email` VARCHAR(45) NOT NULL,
-        `passwordHash` VARCHAR(45) NOT NULL
+        `passwordHash` VARCHAR(255) NOT NULL
     )";
 
 
@@ -45,6 +45,3 @@ try {
     echo $e->getMessage();
     error_log($e->getMessage());
 }
-
-
-?>
