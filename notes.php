@@ -48,4 +48,28 @@
 //  exit;
 
 // }
+
+
+
+// <!-- <body>
+//     <div class="container">
+//         <a href="./logout.php"><button type="button" class="btn btn-secondary">Logout</button></a>
+//         <div class="row">
+//             <form enctype="multipart/form-data" action="" method="post">
+//                 <div class="form-group">
+//                     <label for="note">Note</label>
+//                     <textarea type='text' name='note' placeholder='Add a note' class="form-control" id="note" rows="3"></textarea>
+//                 </div>
+//                 <div class="mb-3">
+//                     <p>
+//                         <label for="userfiles">Upload: </label>
+//                         <input type="file" name="userfiles[]" id="userfiles" multiple>
+//                     </p>
+//                     <button type="submit" class="btn btn-primary">Submit</button>
+//                 </div>
+//             </form>
+//         </div>
+//     </div>
+
+// </body> -->
 ?>
