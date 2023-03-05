@@ -20,15 +20,7 @@ becomes “locked” and an email is sent to the user
 
 <?php
 session_start();
-//check if can login again
-// if (isset($_SESSION['attempt_again'])) {
-//     $now = time();
-//     if ($now >= $_SESSION['attempt_again']) {
-//         unset($_SESSION['attempt']);
-//         unset($_SESSION['attempt_again']);
-//     }
-// }
-echo "Attempts made: " . $_SESSION['attempt'];
+// echo "Attempts made: " . $_SESSION['attempt'];
 unset($_SESSION['success']);
 unset($_SESSION['email']);
 // unset($_SESSION['attempt']);
@@ -56,14 +48,16 @@ unset($_SESSION['email']);
                     <p class="text-center" style="font-size:25px;"><b>Login</b></p>
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="email">
+                        <input type="email" name="email" id="email" minlength="7" class="form-control" placeholder="email">
                     </div>
                     <div class="form-group">
                         <label for="password">Password:</label>
                         <input type="password" name="password" id="password" minlength="6" class="form-control" placeholder="password">
                     </div>
-                    <button type="submit" name="login" class="btn btn-primary"></span> Login</button>&nbsp;&nbsp;&nbsp;
-                    <button type="reset" name="reset" class="btn btn-secondary"></span> Reset Password</button>
+                    <input type="submit" name="login" class="btn btn-primary" value="Login"></input>&nbsp;&nbsp;&nbsp;
+                    <input type="submit" name="signup" class="btn btn-secondary" value="Signup"></input>&nbsp;&nbsp;&nbsp;
+
+                    <input type="submit" name="resetPassword" class="btn btn-info" value="Reset Password"></input>
 
                 </form>
                 <?php
