@@ -39,7 +39,7 @@ session_start();
 
 $note = $_REQUEST['note'];
 echo $note;
-// if the user submitted a note, add it to the database
+
 if (isset($_POST['note'])) {
     $note = $_POST['note'];
     echo $note;
