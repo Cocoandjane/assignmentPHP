@@ -25,14 +25,14 @@ try {
     $notesql = "CREATE TABLE IF NOT EXISTS `note` (
         `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
         `note` VARCHAR(250) NOT NULL,
-        `createdAd` DATE NOT NULL,
+        `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
         `user_id` INT NOT NULL,
         FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
         )";
 
     $imagesql = "CREATE TABLE IF NOT EXISTS `image` (
         `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-        `blob` VARCHAR(500) NOT NULL,
+        `file_name` VARCHAR(500) NOT NULL,
         `note_id` INT NOT NULL,
         FOREIGN KEY (`note_id`) REFERENCES `note`(`id`)
     )";
@@ -45,3 +45,5 @@ try {
     echo $e->getMessage();
     error_log($e->getMessage());
 }
+
+?>

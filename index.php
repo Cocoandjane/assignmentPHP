@@ -37,11 +37,51 @@ include 'dbConfig.php';
 // }
 session_start();
 
-if (isset($_SESSION['email'])) {
-    echo "user logged in";
+$note = $_REQUEST['note'];
+echo $note;
+
+// if the user submitted a note, add it to the database
+if (isset($_POST['note'])) {
+    $note = $_POST['note'];
+    echo $note;
+    $user_id = $_SESSION['user_id'];
+    $user_id = 1;
+    $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
+    $mysql->query($sql);
+    $mysql->close();
+    header("Location: index.php");
+}
+
+// File upload path
+// display uploaded images
+
+if (isset($_FILES['userfile'])) {
+    // echo image
+    $targetDir = "uploads/";
+    $fileName = basename($_FILES["userfile"]["name"]);
+    $targetFilePath = $targetDir . $fileName;
+    $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+
+    // Allow certain file formats
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    if (in_array($fileType, $allowTypes)) {
+        // Upload file to server
+        if (move_uploaded_file($_FILES["userfile"]["tmp_name"], $targetFilePath)) {
+            // Insert image file name into database
+            $insert = $mysql->query("INSERT into image (file_name) VALUES ('" . $fileName . "')");
+            if ($insert) {
+                $statusMsg = "The file " . $fileName . " has been uploaded successfully.";
+            } else {
+                $statusMsg = "File upload failed, please try again.";
+            }
+        } else {
+            $statusMsg = "Sorry, there was an error uploading your file.";
+        }
+    } else {
+        $statusMsg = 'Sorry, only JPG, JPEG, PNG, & GIF files are allowed to upload.';
+    }
 } else {
-    echo "user not logged in";
-    // header("Location: login.php");
+    $statusMsg = 'Please select a file to upload.';
 }
 
 
@@ -64,17 +104,20 @@ if (isset($_SESSION['email'])) {
 <body>
     <div class="container">
         <div class="row">
-
-            <form action='index.php' method="post">>
-                <div class="form-group">
+            <form enctype="multipart/form-data" action="" method="post">
+            <div class="form-group">
                     <label for="note">Note</label>
-                    <textarea type='text' name='note' placeholder='Add a note' class="form-control" id="note" rows="3"></textarea>
+                    <textarea 
+                    type='text' name='note' placeholder='Add a note' 
+                    class="form-control" id="note" rows="3"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="formFileMultiple" class="form-label">Add image</label>
-                    <input class="form-control" type="file" id="formFileMultiple" multiple>
-                </div>
+                <p>
+                    <label for="userfile">Upload: </label>
+                    <input type="file" name="userfile" id="userfile">
+                </p>
                 <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
             </form>
 
         </div>
