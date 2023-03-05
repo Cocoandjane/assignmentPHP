@@ -101,21 +101,20 @@ if (isset($_FILES['userfile'])) {
 </style>
 
 <body>
+    <a href="./logout.php"><button type="button" class="btn btn-secondary">Logout</button></a>
     <div class="container">
         <div class="row">
             <form enctype="multipart/form-data" action="" method="post">
-            <div class="form-group">
+                <div class="form-group">
                     <label for="note">Note</label>
-                    <textarea 
-                    type='text' name='note' placeholder='Add a note' 
-                    class="form-control" id="note" rows="3"></textarea>
+                    <textarea type='text' name='note' placeholder='Add a note' class="form-control" id="note" rows="3"></textarea>
                 </div>
                 <div class="mb-3">
-                <p>
-                    <label for="userfile">Upload: </label>
-                    <input type="file" name="userfile" id="userfile">
-                </p>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                    <p>
+                        <label for="userfile">Upload: </label>
+                        <input type="file" name="userfile" id="userfile">
+                    </p>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
 
