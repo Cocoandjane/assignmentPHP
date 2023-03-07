@@ -13,7 +13,9 @@
 </style>
 <?php
 include 'dbConfig.php';
+session_start();
 if (isset($_POST['edit'])) {
+    $_SESSION['last_activity'] = time(); // update activity time stamp
     // edit form
     $note_id = $_POST['note_id'];
     $sql = "SELECT * FROM note WHERE id = $note_id";
@@ -42,7 +44,7 @@ if (isset($_POST['edit'])) {
                 echo "</form>";
             }
         }
-        
+
         echo "<button type='submit' name='update' class='btn btn-primary'>Update</button>";
         echo "</div></form>";
 
@@ -52,6 +54,8 @@ if (isset($_POST['edit'])) {
         echo "<p>No notes found</p>";
     }
 } else if (isset($_POST['update'])) {
+    $_SESSION['last_activity'] = time(); // update activity time stamp
+
     $note_id = $_POST['note_id'];
     $note = $_POST['note'];
     $query = "UPDATE note SET note = '$note' WHERE id = $note_id";
@@ -87,7 +91,6 @@ if (isset($_POST['edit'])) {
                     // save images to db
                     $sql = "INSERT INTO image (file_name, note_id) VALUES ('$file_name', $note_id)";
                     $mysql->query($sql);
-
                 }
             }
 
@@ -148,14 +151,13 @@ session_start();
 if (isset($_SESSION['email'])) {
     // if the user is logged in, display the notes list
     $sessionEmail = $_SESSION['email'];
-  
+
     // // get user id from email from database
     // Assuming that $sessionEmail is a safe value
     $sql = "SELECT id FROM user WHERE email = '$sessionEmail'";
     $result = $mysql->query($sql);
     $user = $result->fetch_assoc();
     $user_id = $user['id'];
-
     // Use the $user_id value elsewhere in your code
     // echo "The user ID is: " . $user_id;
 } else {
@@ -164,8 +166,22 @@ if (isset($_SESSION['email'])) {
 }
 // $user_id = 1;
 
+// Check if last activity was set and if user is inactive for 10 minutes
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > 600) {
+    // last request was more than 10 minutes ago
+    session_unset();
+    session_destroy();
+    header("Location: login.php");
+} else {
+    // $_SESSION['last_activity'] = time(); // put this update last activity time stamp where there is activity
+    echo "<a href='logout.php'><button class='btn btn-secondary'>Logout</button></a>";
+}
+
+
+
 if (isset($_POST['note']) && isset($_POST['submit'])) {
-    
+    $_SESSION['last_activity'] = time(); // update activity time stamp
+
     if (isset($_FILES['userfiles'])) {
         $note = $_POST['note'];
         echo $note;
@@ -198,7 +214,6 @@ if (isset($_POST['note']) && isset($_POST['submit'])) {
                         // save images to db
                         $sql = "INSERT INTO image (file_name, note_id) VALUES ('$file_name', $note_id)";
                         $mysql->query($sql);
-
                     }
                 }
 
@@ -229,8 +244,6 @@ if (isset($_POST['note']) && isset($_POST['submit'])) {
         exit;
     }
 }
-
-
 
 $sql = "SELECT note.*, image.file_name 
         FROM note
@@ -286,7 +299,8 @@ if ($result->num_rows > 0) {
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-   
+    $_SESSION['last_activity'] = time(); // update activity time stamp
+
     if (isset($_POST['delete'])) {
         // process delete form
         $note_id = $_POST['note_id'];
@@ -294,9 +308,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mysql->query($sql);
         $sql = "DELETE FROM image WHERE note_id = $note_id";
         $mysql->query($sql);
-        
+
         header('Location: /assignmentPHP/index.php');
-    }else if (isset($_POST['deleteImage'])){
+    } else if (isset($_POST['deleteImage'])) {
         $image_id = $_POST['image_id'];
         $query = "DELETE FROM image WHERE id = $image_id";
         $result = $mysql->query($query);
