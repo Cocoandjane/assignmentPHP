@@ -2,13 +2,19 @@
 
 try {
 
-    $servername = "containers-us-west-119.railway.app";
-    $username = "root";
-    $password = "yo5sZZTb4tea7SMAl4s2";
-    $database = "railway";
-    $port = 7628;
+    // $servername = "containers-us-west-119.railway.app";
+    // $username = "root";
+    // $password = "yo5sZZTb4tea7SMAl4s2";
+    // $database = "railway";
+    // $port = 7628;
 
-    $mysql = new mysqli($servername, $username, $password, $database, $port);
+    $servername = "localhost";
+    $username = "root";
+    $password = "root";
+    $database = "assignmentphp";
+    
+
+    $mysql = new mysqli($servername, $username, $password, $database);
     if ($mysql === false) {
         die("ERROR: Could not connect. "
             . mysqli_connect_error());

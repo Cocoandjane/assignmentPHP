@@ -15,24 +15,25 @@ becomes “locked” and an email is sent to the user DONE
 */
 
 session_start();
-$servername = "containers-us-west-119.railway.app";
-$username = "root";
-$password = "yo5sZZTb4tea7SMAl4s2";
-$database = "railway";
-$port = 7628;
+// $servername = "containers-us-west-119.railway.app";
+// $username = "root";
+// $password = "yo5sZZTb4tea7SMAl4s2";
+// $database = "railway";
+// $port = 7628;
+include 'dbConfig.php';
 
-try {
-    $mysql = new mysqli($servername, $username, $password, $database, $port);
-    if ($mysql === false) {
-        die("ERROR: Could not connect. "
-            . mysqli_connect_error());
-    } else {
-        echo "Connected to database successfully";
-        // echo "Attempts made: " . $_SESSION['attempt'];
-    }
-} catch (mysqli_sql_exception $e) {
-    throw $e;
-}
+// try {
+//     $mysql = new mysqli($servername, $username, $password, $database, $port);
+//     if ($mysql === false) {
+//         die("ERROR: Could not connect. "
+//             . mysqli_connect_error());
+//     } else {
+//         echo "Connected to database successfully";
+//         // echo "Attempts made: " . $_SESSION['attempt'];
+//     }
+// } catch (mysqli_sql_exception $e) {
+//     throw $e;
+// }
 
 
 if (isset($_POST['resetPassword'])) {
