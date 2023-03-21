@@ -1,9 +1,50 @@
 body {
-    max-width: 500px;
-    margin: auto;
+  margin-left: 10rem;
+  margin-right: 10rem;
+  margin-top: 2rem;
+}
+@media screen and (max-width: 1200px) {
+  body {
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
+}
 
-  img {
-    width: 200px;
-    height: auto;
-  }
+
+.welcome {
+  float: right;
+  margin-bottom: 2rem;
+}
+
+.btn.btn-primary {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.mage-div{
+  display: flex;
+  flex-direction: row;
+}
+
+.logoutButton button:hover {
+  background-color: #45a049;
+}
+
+.title {
+  text-align: center;
+}
+
+
+img {
+  width: 200px;
+  height: auto;
+}

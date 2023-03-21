@@ -2,16 +2,16 @@
 
 try {
 
-    // $servername = "containers-us-west-119.railway.app";
-    // $username = "root";
-    // $password = "yo5sZZTb4tea7SMAl4s2";
-    // $database = "railway";
-    // $port = 7628;
-
-    $servername = "localhost";
+    $servername = "containers-us-west-119.railway.app";
     $username = "root";
-    $password = "root";
-    $database = "assignmentphp";
+    $password = "yo5sZZTb4tea7SMAl4s2";
+    $database = "railway";
+    $port = 7628;
+
+    // $servername = "localhost";
+    // $username = "root";
+    // $password = "root";
+    // $database = "assignmentphp";
     
 
     $mysql = new mysqli($servername, $username, $password, $database);
