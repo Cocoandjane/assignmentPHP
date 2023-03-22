@@ -48,3 +48,11 @@ img {
   width: 200px;
   height: auto;
 }
+
+.container {
+  z-index: -100;
+}
+
+.logout {
+  float: right;
+}

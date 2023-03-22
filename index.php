@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Login</title>
 </head>
 <style>
     <?php include 'index.css'; ?>
 </style>
+
 <?php
 include 'dbConfig.php';
 
@@ -25,14 +25,10 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     header("Location: login.php");
 } else {
     // $_SESSION['last_activity'] = time(); // put this update last activity time stamp where there is activity
-    echo "<div class='welcome'><div >Welcome: " . $_SESSION['email'] . "</div><a href='logout.php'><button class='btn btn-outline-secondary'>Logout</button></a></div>";
+    echo "<div class='welcome'><div>Welcome: " . $_SESSION['email'] . "</div><a class='logout' href='logout.php'><button class='btn btn-outline-secondary'>Logout</button></a></div>";
 }
 
-
-
-
 ?>
-
 
 </html>
 <?php
@@ -80,68 +76,67 @@ if (isset($_POST['note']) && isset($_POST['submit'])) {
 
         $statusMsg = 'Please enter a note.';
         echo $statusMsg;
-
     } else
         if (isset($_FILES['userfiles'])) {
+        $note = $_POST['note'];
+        echo $note;
+        $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
+        $mysql->query($sql);
+        $note_id = $mysql->insert_id;
+
+        echo $note_id;
+
+        if (isset($_FILES['userfiles'])) {
+            $total_files = count($_FILES['userfiles']['name']);
+            if ($total_files < 4) {
+                $errors = array();
+                $uploadedFiles = array();
+                $extension = array("jpeg", "jpg", "png", "gif");
+
+                foreach ($_FILES['userfiles']['tmp_name'] as $key => $tmp_name) {
+                    $file_name = $_FILES['userfiles']['name'][$key];
+                    $file_tmp = $_FILES['userfiles']['tmp_name'][$key];
+                    $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                    if (in_array($file_ext, $extension) === false) {
+                        $errors[] = "extension not allowed, please choose a JPEG, PNG, or GIF file.";
+                    }
+
+                    if (empty($errors) == true) {
+                        $uploadedFiles[] = $file_name;
+                        // move_uploaded_file($file_tmp, "uploads/images/" . $file_name);
+                        move_uploaded_file($file_tmp, "uploads/images/" . $file_name);
+                        // save images to db
+                        $sql = "INSERT INTO image (file_name, note_id) VALUES ('$file_name', $note_id)";
+                        $mysql->query($sql);
+                    }
+                }
+
+                if (empty($errors)) {
+                    echo "Images uploaded successfully:";
+                    echo "<ul>";
+                    foreach ($uploadedFiles as $name) {
+                        echo "<li>$name</li>";
+                    }
+                    echo "</ul>";
+                } else {
+                    print_r($errors);
+                }
+            } else {
+                $statusMsg = 'You can only upload a maximum of 4 images.';
+            }
+        } else {
             $note = $_POST['note'];
             echo $note;
             $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
             $mysql->query($sql);
             $note_id = $mysql->insert_id;
-
             echo $note_id;
-
-            if (isset($_FILES['userfiles'])) {
-                $total_files = count($_FILES['userfiles']['name']);
-                if ($total_files < 4) {
-                    $errors = array();
-                    $uploadedFiles = array();
-                    $extension = array("jpeg", "jpg", "png", "gif");
-
-                    foreach ($_FILES['userfiles']['tmp_name'] as $key => $tmp_name) {
-                        $file_name = $_FILES['userfiles']['name'][$key];
-                        $file_tmp = $_FILES['userfiles']['tmp_name'][$key];
-                        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-
-                        if (in_array($file_ext, $extension) === false) {
-                            $errors[] = "extension not allowed, please choose a JPEG, PNG, or GIF file.";
-                        }
-
-                        if (empty($errors) == true) {
-                            $uploadedFiles[] = $file_name;
-                            // move_uploaded_file($file_tmp, "uploads/images/" . $file_name);
-                            move_uploaded_file($file_tmp, "uploads/images/" . $file_name);
-                            // save images to db
-                            $sql = "INSERT INTO image (file_name, note_id) VALUES ('$file_name', $note_id)";
-                            $mysql->query($sql);
-                        }
-                    }
-
-                    if (empty($errors)) {
-                        echo "Images uploaded successfully:";
-                        echo "<ul>";
-                        foreach ($uploadedFiles as $name) {
-                            echo "<li>$name</li>";
-                        }
-                        echo "</ul>";
-                    } else {
-                        print_r($errors);
-                    }
-                } else {
-                    $statusMsg = 'You can only upload a maximum of 4 images.';
-                }
-            } else {
-                $note = $_POST['note'];
-                echo $note;
-                $sql = "INSERT INTO note (note, user_id) VALUES ('$note', $user_id)";
-                $mysql->query($sql);
-                $note_id = $mysql->insert_id;
-                echo $note_id;
-                $statusMsg = 'Please select a file to upload.';
-            }
-            header('Location: /assignmentPHP/index.php');
-            exit;
+            $statusMsg = 'Please select a file to upload.';
         }
+        header('Location: /assignmentPHP/index.php');
+        exit;
+    }
 }
 
 $sql = "SELECT note.* , image.file_name 
