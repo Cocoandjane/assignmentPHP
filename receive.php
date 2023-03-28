@@ -20,9 +20,9 @@ $username = "root";
 $password = "1rfGgzegoG0Ld4sSa6BP";
 $database = "railway";
 $port = 5678;
-$headers = 'From: php.mailing.test@gmail.com' . "\r\n" . 
-           'MIME-Version: 1.0' . "\r\n" .
-           'Content-Type: text/html; charset=utf-8';
+$headers = 'From: php.mailing.test@gmail.com' . "\r\n" .
+    'MIME-Version: 1.0' . "\r\n" .
+    'Content-Type: text/html; charset=utf-8';
 // include 'dbConfig.php';
 
 try {
@@ -68,14 +68,13 @@ if (isset($_POST['resetPassword'])) {
                     $hashed_password = password_hash($generatedPass, PASSWORD_DEFAULT);
                     $save_new_password = "UPDATE user SET passwordHash = '$hashed_password' WHERE email = '$inputEmail'";
                     $mysql->query($save_new_password);
-    
+
                     unset($_SESSION['attempt']);
                     $_SESSION['error'] = 'Password reset email sent.';
-                    mail($inputEmail, 'Password reset', 'Please login with this new password: ' . $generatedPass . '  here http://localhost:8888/assignmentPHP/login.php', $headers);
+                    mail($inputEmail, 'Password reset', 'Please login with this new password: ' . $generatedPass . '  here http://165.227.46.209/login.php', $headers);
                     header('Location: login.php');
                 }
             }
-
         } catch (mysqli_sql_exception $e) {
             echo "could not connect to database";
             error_log($e->getMessage());
@@ -119,7 +118,7 @@ if (isset($_POST['resetPassword'])) {
                     //check if there are 3 attempts already
                     if ($_SESSION['attempt'] == 3) {
                         $_SESSION['error'] = 'Attempt limit reached, please check email for unlock link.';
-                        mail($inputEmail, 'Account locked', 'Please click the link to unlock your account: ' . 'http://localhost:8888/assignmentPHP/unlock.php', $headers);
+                        mail($inputEmail, 'Account locked', 'Please click the link to unlock your account: ' . 'http://165.227.46.209/unlock.php', $headers);
                         header('Location: login.php');
                     } else {
                         $_SESSION['attempt'] += 1;
@@ -167,7 +166,7 @@ if (isset($_POST['resetPassword'])) {
 
                 // fix this, also y only error messages show up
                 $_SESSION['error'] = 'Activation link sent to email.';
-                mail($newEmail, 'Activate user', 'Please click this link to activate your account: http://localhost:8888/assignmentPHP/activateUser.php?email=' . $newEmail, $headers);
+                mail($newEmail, 'Activate user', 'Please click this link to activate your account: http://165.227.46.209/activateUser.php?email=' . $newEmail, $headers);
                 header('Location: login.php');
             }
         } catch (mysqli_sql_exception $e) {
@@ -179,5 +178,3 @@ if (isset($_POST['resetPassword'])) {
         header('Location: login.php');
     }
 }
-
-?>

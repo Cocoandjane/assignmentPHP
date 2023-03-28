@@ -54,6 +54,3 @@ try {
     echo $e->getMessage();
     error_log($e->getMessage());
 }
-
-
-?>
